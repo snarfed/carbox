@@ -28,11 +28,13 @@ jobs:
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+      # - name: Install dependencies
+      #   if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      #   run: poetry install --no-interaction --no-root --with dev
       - name: Install library
-        run: poetry install --no-interaction
+        run: |
+          poetry install --no-interaction --with dev
+          poetry install --no-interaction
       - name: Run tests
         run: |
           source .venv/bin/activate

@@ -28,3 +28,9 @@ pytest-benchmark = "^4.0.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.coverage.run]
+omit = [".*", "bin/*", "**/*_test.py"]
+
+[tool.coverage.report]
+fail_under = 1

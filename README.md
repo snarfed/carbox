@@ -10,7 +10,7 @@ reader. Enough to get you reading from the [ATP](https://atproto.com/) firehose.
 ## Installation
 
 ```bash
-pip install car
+pip install carbox
 ```
 
 ## Basic Usage
