@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "carbox"
+version = "0.0.1"
+description = ""
+authors = ["generativist <jbn@abreka.com>"]
+readme = "README.md"
+homepage = "https://github.com/jbn/carbox"
+repository = "https://github.com/jbn/carbox"
+documentation = "https://github.com/jbn/carbox"
+license = "MIT"
+
+
+[tool.poetry.dependencies]
+python = "^3.9"
+dag-cbor = "^0.3.2"
+multiformats = "^0.2.1"
+cbor2 = "^5.4.6"
+
+[tool.poetry.extras]
+optimized = ["numba"]
+
+[tool.poetry.group.dev.dependencies]
+coverage = {extras = ["toml"], version = "^7.2.5"}
+numba = "^0.57.0"
+pytest = "^7.3.1"
+pytest-benchmark = "^4.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

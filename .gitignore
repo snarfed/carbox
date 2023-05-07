@@ -1,0 +1,11 @@
+./lexicons/
+dist
+__pycache__
+.vscode
+*.pyc
+.env
+graph.jsonl
+graph_tasks.db
+.coverage
+streams/
+
