@@ -1,3 +1,8 @@
+"""IPLD CAR LEB128 varint decoding/encoding.
+
+https://ipld.io/specs/transport/car/carv1/#format-description
+https://en.wikipedia.org/wiki/LEB128
+"""
 import io
 from typing import Tuple
 from carbox.jit import jit
@@ -18,6 +23,17 @@ def read_varint_from_reader(reader: io.BufferedReader) -> int:
         shift += 7
 
     return result
+
+
+def write_varint_to_writer(val: int, writer: io.BufferedWriter):
+    while True:
+        byte = val & 0x7f
+        val = val >> 7
+        if val != 0:
+            byte |= 0x80
+        writer.write(bytes([byte]))
+        if val == 0:
+            break
 
 
 @jit(nopython=True)
