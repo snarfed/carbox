@@ -1,18 +1,25 @@
 from carbox.message import read_event_pair
 from multiformats import CID
 from base64 import b64decode
-from carbox.car import read_car
+from carbox.car import Block, read_car, write_car
 from pathlib import Path
+from typing import List, Tuple
 
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
-def test_read_car():
+
+def read_fixture() -> Tuple[bytes, List[CID], List[Block]]:
     fixture_path = FIXTURES_DIR / "donkeyballs.b64"
     post = b64decode(fixture_path.read_text())
     _, event = read_event_pair(post)
     blocks_raw = event["blocks"]
     roots, blocks = read_car(blocks_raw)
+    return blocks_raw, roots, blocks
+
+
+def test_read_car():
+    _, roots, blocks = read_fixture()
 
     assert [str(cid) for cid in roots] == [
         "zdpuArKcqh4Bfc5ufSWKTSS1jFRYJ47gpuxCEVXeWdMEjDpAM"
@@ -27,3 +34,11 @@ def test_read_car():
         "createdAt": "2023-04-23T23:05:15.184Z",
         "text": "donkeyballs",
     }
+
+
+def test_write_car():
+    fixture_bytes, roots, blocks = read_fixture()
+
+    blocks = [Block(decoded=b.decoded) for b in blocks]
+    block_bytes = write_car(roots, blocks)
+    assert block_bytes == fixture_bytes

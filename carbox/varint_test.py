@@ -3,7 +3,7 @@ import carbox.varint as varint
 
 
 def test_read_uvarint():
-    test_data = b"\x8E\x02\x03"  # Represents the uvarint values 142, 3
+    test_data = b"\x8E\x02\x03"  # Represents the uvarint values 270, 3
 
     buf = io.BufferedReader(io.BytesIO(test_data))
 
@@ -23,3 +23,11 @@ def test_read_uvarint():
     offset1 = varint.burn_varint_bytes(test_data, 0)
     offset2 = varint.burn_varint_bytes(test_data, offset1)
     assert offset2 == len(test_data)
+
+
+def test_write_uvarint():
+    writer = io.BufferedWriter(io.BytesIO())
+    varint.write_varint_to_writer(270, writer)
+    varint.write_varint_to_writer(3, writer)
+    writer.flush()
+    assert writer.raw.getvalue() == b"\x8E\x02\x03"  # uvarint values 270, 3

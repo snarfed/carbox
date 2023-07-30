@@ -2,13 +2,14 @@ from __future__ import annotations
 import dag_cbor
 import io
 from typing import List, Tuple
-from multiformats import CID
+from multiformats import CID, multicodec, multihash
 from carbox.jit import jit
 
 from carbox.varint import (
     burn_varint_bytes,
     read_varint_from_bytes,
     read_varint_from_bytes_no_throw,
+    write_varint_to_writer,
 )
 
 
@@ -18,17 +19,24 @@ MAX_ALLOWED_SECTION_SIZE = 32 << 20  # 32MiB
 class Block:
     __slots__ = ("_cid", "_data", "_decoded")
 
-    def __init__(self, cid: CID, data: bytes):
+    def __init__(self, cid: CID = None, data: bytes = None,
+                 decoded: dag_cbor.IPLDKind = None):
+        assert data or decoded
         self._cid = cid
         self._data = data
-        self._decoded = None
+        self._decoded = decoded
 
     @property
     def cid(self) -> CID:
+        if self._cid is None:
+            digest = multihash.digest(self.data, 'sha2-256')
+            self._cid = CID('base58btc', 1, multicodec.get('dag-cbor'), digest)
         return self._cid
 
     @property
     def data(self) -> bytes:
+        if self._data is None:
+            self._data = dag_cbor.encode(self.decoded)
         return self._data
 
     def __repr__(self) -> str:
@@ -77,6 +85,28 @@ def read_car(blocks: bytes, validate=True) -> Tuple[List[CID], List[Block]]:
     roots, offset = _get_roots(blocks, 0)
     blocks = read_blocks(blocks, offset, validate)
     return roots, blocks
+
+
+def write_car(roots: List[CID], blocks: List[Block]) -> bytes:
+    """
+    Writes root(s) and list of blocks to car bytes.
+
+    :param roots: the root CIDs to write
+    :param blocks: the blocks to write
+    """
+    writer = io.BufferedWriter(io.BytesIO())
+
+    header = {
+        'version': 1,
+        'roots': roots,
+    }
+    _write_block(dag_cbor.encode(header), writer)
+
+    for block in blocks:
+        _write_block(bytes(block.cid) + block.data, writer)
+
+    writer.flush()
+    return writer.raw.getvalue()
 
 
 @jit(nopython=True)
@@ -129,6 +159,11 @@ def _get_roots(block_fp: io.BufferedReader, offset: int) -> List[CID]:
         raise ValueError("Empty car, no roots")
 
     return header["roots"], offset
+
+
+def _write_block(block: bytes, writer: io.BufferedWriter):
+    write_varint_to_writer(len(block), writer)
+    writer.write(block)
 
 
 @jit(nopython=True)
