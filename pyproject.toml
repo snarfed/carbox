@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carbox"
-version = "0.0.1"
+version = "0.2"
 description = ""
 authors = ["generativist <jbn@abreka.com>"]
 readme = "README.md"
