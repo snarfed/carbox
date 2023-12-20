@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carbox"
-version = "0.2"
+version = "0.3"
 description = ""
 authors = ["generativist <jbn@abreka.com>"]
 readme = "README.md"
@@ -12,18 +12,18 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-dag-cbor = "^0.3.2"
-multiformats = "^0.2.1"
-cbor2 = "^5.4.6"
+dag-cbor = "^0.3"
+multiformats = "^0.3"
+cbor2 = "^5.4"
 
 [tool.poetry.extras]
 optimized = ["numba"]
 
 [tool.poetry.group.dev.dependencies]
-numba = "^0.57.0"
-pytest = "^7.3.1"
-pytest-benchmark = "^4.0.0"
-coverage = {extras = ["toml"], version = "^7.2.3"}
+numba = "^0.57"
+pytest = "^7.3"
+pytest-benchmark = "^4.0"
+coverage = {extras = ["toml"], version = "^7.2"}
 
 [build-system]
 requires = ["poetry-core"]
