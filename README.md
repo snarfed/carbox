@@ -37,14 +37,13 @@ car_bytes = write_car(block.cid, [block])
 
 ## Changelog
 
-### 0.3 - unreleased
+### 0.3 - 2024-03-16
 
 * Relax dependencies to allow minor version upgrades.
 
 ### 0.2 - 2023-09-07
 
 Add write support via `car.write_car`. See usage example above for details.
-
 
 ### 0.0.1 - 2023-05-07
 
