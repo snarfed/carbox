@@ -1,7 +1,7 @@
 from __future__ import annotations
 import dag_cbor
 import io
-from typing import List, Tuple
+from typing import List, Tuple, Union
 from multiformats import CID, multicodec, multihash
 from carbox.jit import jit
 
@@ -19,15 +19,24 @@ MAX_ALLOWED_SECTION_SIZE = 32 << 20  # 32MiB
 class Block:
     __slots__ = ("_cid", "_data", "_decoded")
 
-    def __init__(self, cid: CID = None, data: bytes = None,
+    def __init__(self, cid: Union[CID, bytes] = None, data: bytes = None,
                  decoded: dag_cbor.IPLDKind = None):
+        """
+        :param cid: either a :class:`CID` or its raw binary encoding (the bytes
+            that ``bytes(cid)`` would return). Passing bytes avoids re-encoding
+            the CID inside :func:`write_car`, which is faster on hot paths
+            with many blocks.
+        :param data: raw DAG-CBOR encoded bytes
+        :param decoded: decoded IPLD value, used to lazily compute ``data`` if
+            not provided
+        """
         assert data or decoded
         self._cid = cid
         self._data = data
         self._decoded = decoded
 
     @property
-    def cid(self) -> CID:
+    def cid(self) -> Union[CID, bytes]:
         if self._cid is None:
             digest = multihash.digest(self.data, 'sha2-256')
             self._cid = CID('base58btc', 1, multicodec.get('dag-cbor'), digest)

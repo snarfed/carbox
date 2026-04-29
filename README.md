@@ -37,6 +37,10 @@ car_bytes = write_car(block.cid, [block])
 
 ## Changelog
 
+### 0.4 - unreleased
+
+* `Block`: accept raw binary CID bytes (the form returned by `bytes(cid)`) in addition to `CID` objects. Avoids re-encoding the CID inside `write_car` on hot paths with many blocks.
+
 ### 0.3 - 2024-03-16
 
 * Relax dependencies to allow minor version upgrades.
