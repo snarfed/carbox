@@ -14,7 +14,7 @@ license = "MIT"
 python = "^3.9"
 dag-cbor = "^0.3"
 multiformats = "^0.3"
-cbor2 = "^5.4"
+cbor2 = "<=7.0"
 
 [tool.poetry.extras]
 optimized = ["numba"]
